@@ -1,58 +1,76 @@
-
-
-
-let now = new Date();
-// console.log(first)
-
-function countDown(){
-    const seconds = 1000,
-    minutes = seconds * 60,
-    hours = minutes * 60,
-    day = hours * 24;   
-
-
-    let today = new Date()
-    let dd = String(today.getDate())
-    let mm = String(today.getMonth())
-    yyyy = today.getFullYear();
-
-    let nextYear = yyyy + 1,  
-    dayMonth = "10/18/",  
-    birthday = dayMonth + nextYear;
-
-    today = mm + "/" + dd + "/" + yyyy;
-    console.log(today)
-    console.log(birthday)
-
-    if (today > birthday) {  
-        birthday = dayMonth + nextYear; 
-
-        const countDown = new Date(birthday).getTime();
-
-      
-
-
-        x = setInterval(function(){
-           const now =new Date().getTime(),
-           distance = countDown - now; 
-           
-           document.getElementById("day").innerText = Math.floor(distance / (day))
-           document.getElementById("hr").innerText = Math.floor((distance % (day)) / (hours))
-           document.getElementById("min").innerText = Math.floor((distance % (hours)) / (minutes))
-           document.getElementById("sec").innerText = Math.floor((distance % (minutes)) / (seconds))
-
-
-           if (distance < 0) {  
-            document.getElementById("headline").innerText = "It's my birthday!";  
-            distance = 0;
-            document.getElementById("content").style.display = "block";  
-            clearInterval(x);  
-           } 
-        },0 )
-
-
-       } 
-    
-}
-
-countDown()
+class Functionalities {
+    alertEle = document.querySelector("#alert");
+    alertText = document.querySelector("#alertText");
+    interval = "";
+    countdown = document.querySelector("#countdown");
+    years = document.querySelector("#years");
+    Months = document.querySelector("#months");
+    Days = document.querySelector("#day");
+    hours = document.querySelector("#hr");
+    Minutes = document.querySelector("#min");
+    seconds = document.querySelector("#sec");
+  
+    // submit button click
+    submit(event) {
+      event.preventDefault();
+      clearInterval(this.interval);
+  
+      //  extract monthm date year form the input date element
+      const [month, date, year] = event.target[0].value.split("/");
+      // extract hour , minute form inpute time element
+      const [hour, minute] = event.target[1].value.split(":");
+      //  create new date using ( year , date, month,hours,minute) extracted value from inpute
+      const countDownTime = new Date(
+        `${year}-${month}-${date}T${hour}:${minute}:00`
+      );
+      // get current date
+      const currentDate = new Date();
+  
+      // check if countDown date is greater then current  date if not then thwor warning else call displayTime() for  every interval of 1 second
+      if (currentDate > countDownTime) return this.warningAlert();
+      else {
+        return (this.interval = setInterval(() => {
+          this.displayTime(countDownTime, currentDate);
+        }, 1000));
+      }
+    }
+  
+    // display Time
+    displayTime(countDownTime) {
+      const timeLeft = new Date(countDownTime - new Date());
+      if (timeLeft < 0) {
+        clearInterval(this.interval);
+        this.years.textContent =
+          this.Months.textContent =
+          this.Days.textContent =
+          this.hours.textContent =
+          this.Minutes.textContent =
+          this.seconds.textContent =
+            0;
+      }
+  
+      const years = timeLeft.getUTCFullYear() - 1970;
+      const months = timeLeft.getUTCMonth();
+      const days = timeLeft.getUTCDate() - 1;
+      const hours = timeLeft.getUTCHours();
+      const minutes = timeLeft.getUTCMinutes();
+      const seconds = timeLeft.getUTCSeconds();
+  
+      this.years.textContent = years;
+      this.Months.textContent = months;
+      this.Days.textContent = days;
+      this.hours.textContent = hours;
+      this.Minutes.textContent = minutes;
+      this.seconds.textContent = seconds;
+    }
+  
+    warningAlert() {
+      this.alertEle.style.display = "block";
+      this.alertText.textContent =
+        "countdown time should be greater then current time";
+      setTimeout(() => {
+        this.alertEle.style.display = "none";
+      }, 3000);
+    }
+  }
+  const functionalities = new Functionalities();
